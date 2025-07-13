@@ -308,7 +308,7 @@ def parse_args():
     )
 
     parser.add_argument(
-        "--seed", type=int, default=555, help="A seed for reproducible evaluation."
+        "--seed", type=int, default=42, help="A seed for reproducible evaluation."
     )
     parser.add_argument(
         "--batch_size", type=int, default=1, help="The batch size for evaluation."
@@ -347,7 +347,8 @@ def parse_args():
     )
     parser.add_argument(
         "--repaint", 
-        action="store_true", 
+        action="store_true",
+        default=True,
         help="Whether to repaint the result image with the original background."
     )
     parser.add_argument(
