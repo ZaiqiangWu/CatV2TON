@@ -349,6 +349,7 @@ def main():
         if args.repaint:
             results = repaint(persons, masks, results)
         print(results.shape)
+        write_video('./output.mp4', results, fps=24)
 
             
 
