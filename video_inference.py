@@ -65,7 +65,8 @@ class VideoDataset(Dataset):
         person_image = resize_and_crop(person_image, (384, 512))
         preprocess =  self.automasker(
             person_image,
-            self.cloth_type
+            self.cloth_type,
+            densepose_colormap=cv2.COLORMAP_VIRIDIS
         )
         mask =preprocess['mask']
         mask = self.mask_processor.blur(mask, blur_factor=9)
