@@ -89,6 +89,7 @@ class VideoDataset(Dataset):
             denseposes.append(densepose)
         persons=torch.cat(persons, dim=2)
         masks=torch.cat(masks, dim=2)
+        masks=masks.repeat(1,3,1,1,1)
         denseposes=torch.cat(denseposes, dim=2)
         print(persons.shape)
         print(masks.shape)
