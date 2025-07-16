@@ -74,7 +74,7 @@ class VideoDataset(Dataset):
         masked_person = vis_mask(person_image, mask)
         masked_person = self.image_transforms(masked_person).unsqueeze(1).unsqueeze(0)#1CTHW
         mask = self.mask_transforms(mask).unsqueeze(1).unsqueeze(0)
-        print(np.array(densepose).shape)
+        #print(np.array(densepose).shape)
         densepose = self.image_transforms(densepose).unsqueeze(1).unsqueeze(0)
         return masked_person, mask, densepose
 
@@ -90,6 +90,9 @@ class VideoDataset(Dataset):
         persons=torch.cat(persons, dim=2)
         masks=torch.cat(masks, dim=2)
         denseposes=torch.cat(denseposes, dim=2)
+        print(persons.shape)
+        print(masks.shape)
+        print(denseposes.shape)
         return persons, masks, denseposes
 
 
