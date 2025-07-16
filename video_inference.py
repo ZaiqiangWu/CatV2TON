@@ -356,7 +356,7 @@ def main():
         print(results.shape)#thwc
         n_frame = results.shape[0]
         for i in range(n_frame):
-            video_writer.append(results[i].numpy(),isRGB=True)
+            video_writer.append(results[i].numpy().astype(np.uint8),isRGB=True)
         #write_video('./output.mp4', results, fps=24)
         video_writer.make_video()
         video_writer.close()
