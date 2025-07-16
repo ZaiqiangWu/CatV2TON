@@ -32,7 +32,7 @@ def read_video_frames(video_path, start_frame, end_frame, normalize=True):
     return video
 
 class VideoDataset(Dataset):
-    def __init__(self,video_path,cloth_type,clip_length=8):
+    def __init__(self,video_path,cloth_type,clip_length=7):
         self.video_loader = MultithreadVideoLoader(video_path)
         self.clip_length = clip_length
         self.cloth_type = cloth_type#'upper', 'lower', 'overall', 'inner', 'outer'
