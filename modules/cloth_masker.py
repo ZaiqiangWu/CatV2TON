@@ -120,12 +120,13 @@ dense_mask_parts = {
 def vis_mask(image, mask):
     image = np.array(image).astype(np.uint8)
     mask = np.array(mask).astype(np.uint8)
+    gray_img = np.ones_like(image)*127
     mask[mask > 127] = 255
     mask[mask <= 127] = 0
     mask = np.expand_dims(mask, axis=-1)
     mask = np.repeat(mask, 3, axis=-1)
     mask = mask / 255
-    return Image.fromarray((image * (1 - mask)).astype(np.uint8))
+    return Image.fromarray((image * (1 - mask) + gray_img*mask).astype(np.uint8))
 
 def part_mask_of(part: Union[str, list],
                  parse: np.ndarray, mapping: dict):
