@@ -349,7 +349,7 @@ def main():
         if args.repaint:
             results = repaint(persons, masks, results)
         print(results.shape)
-        results = results * 0.5 + 0.5
+        results = results[0] * 0.5 + 0.5
         results = (results.permute(1, 2, 3, 0).cpu() * 255).clamp(0, 255)
         write_video('./output.mp4', results, fps=24)
 
