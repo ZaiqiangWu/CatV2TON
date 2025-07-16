@@ -132,7 +132,6 @@ def parse_args():
     parser.add_argument(
         "--data_root_path", 
         type=str, 
-        required=True,
         help="Path to the dataset to evaluate."
     )
     parser.add_argument(
