@@ -71,7 +71,7 @@ class VideoDataset(Dataset):
         mask =preprocess['mask']
         mask = self.mask_processor.blur(mask, blur_factor=9)
         densepose = preprocess['densepose']
-        masked_person = vis_mask(person_image, mask)
+        masked_person = person_image#vis_mask(person_image, mask)
         masked_person = self.image_transforms(masked_person).unsqueeze(1).unsqueeze(0)#1CTHW
         mask = self.mask_transforms(mask).unsqueeze(1).unsqueeze(0)
         #print(np.array(densepose).shape)
