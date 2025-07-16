@@ -28,8 +28,8 @@
 
 Create a conda environment & Install requirments
 ```shell
-conda create -n catvton python==3.9.0
-conda activate catvton
+conda create -n catv2ton python==3.9.0
+conda activate catv2ton
 cd CatVTON-main  # or your path to CatVTON project dir
 pip install -r requirements.txt
 #pip install git+https://github.com/huggingface/diffusers.git
