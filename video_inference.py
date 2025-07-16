@@ -287,6 +287,7 @@ def repaint(
 @torch.no_grad()
 def main():
     args = parse_args()
+
     
     # Pipeline
     base_model_path = snapshot_download(args.base_model_path) if not os.path.exists(args.base_model_path) else args.base_model_path
@@ -312,6 +313,7 @@ def main():
     cloth_image = Image.open(cloth_path).convert("RGB")
     cloth_image = resize_and_padding(cloth_image, (args.width, args.height))
     cloth_image = video_dataset.image_transforms(cloth_image).unsqueeze(1).unsqueeze(0)
+    video_writer = MultithreadVideoWriter(outvid='./output.mp4', fps=video_dataset.video_loader.get_fps())
 
 
 
@@ -351,8 +353,13 @@ def main():
         print(results.shape)
         results = results[0] * 0.5 + 0.5
         results = (results.permute(1, 2, 3, 0).cpu() * 255).clamp(0, 255)
-        print(results.shape)
-        write_video('./output.mp4', results, fps=24)
+        print(results.shape)#thwc
+        n_frame = results.shape[0]
+        for i in range(n_frame):
+            video_writer.append(results[i].numpy(),isRGB=True)
+        #write_video('./output.mp4', results, fps=24)
+        video_writer.make_video()
+        video_writer.close()
 
             
 
