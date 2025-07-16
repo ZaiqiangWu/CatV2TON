@@ -301,8 +301,8 @@ def main():
     
     # Dataset
 
-    video_path = ''
-    cloth_path = ''
+    video_path = './videos/jin_16_test.mp4'
+    cloth_path = './garments/upperbody/jin_00_white_bg.jpg'
     video_dataset = VideoDataset(video_path, 'upper', clip_length=8)
     cloth_image = Image.open(cloth_path).convert("RGB")
     cloth_image = resize_and_padding(cloth_image, (args.width, args.height))
@@ -342,6 +342,7 @@ def main():
         # Repaint
         if args.repaint:
             results = repaint(persons, masks, results)
+        print(results.shape)
 
             
 
