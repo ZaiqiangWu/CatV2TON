@@ -200,8 +200,8 @@ class AutoMasker:
         
         self.mask_processor = VaeImageProcessor(vae_scale_factor=8, do_normalize=False, do_binarize=True, do_convert_grayscale=True)
 
-    def process_densepose(self, image_or_path):
-        return self.densepose_processor(image_or_path, resize=1024)
+    def process_densepose(self, image_or_path,colormap=None):
+        return self.densepose_processor(image_or_path, resize=1024,colormap=colormap)
 
     def process_schp_lip(self, image_or_path):
         return self.schp_processor_lip(image_or_path)
@@ -350,6 +350,7 @@ class AutoMasker:
         self,
         image: Union[str, Image.Image],
         mask_type: str = "upper",
+            densepose_colormap: int=None,#cv2.COLORMAP_VIRIDIS
     ):
         assert mask_type in ['upper', 'lower', 'overall', 'inner', 'outer'], f"mask_type should be one of ['upper', 'lower', 'overall', 'inner', 'outer'], but got {mask_type}"
         preprocess_results = self.preprocess_image(image)
@@ -359,9 +360,10 @@ class AutoMasker:
             preprocess_results['schp_atr'], 
             part=mask_type,
         )
+        densepose = self.process_densepose(image, densepose_colormap)
         return {
             'mask': mask,
-            'densepose': preprocess_results['densepose'],
+            'densepose': densepose,#preprocess_results['densepose'],
             'schp_lip': preprocess_results['schp_lip'],
             'schp_atr': preprocess_results['schp_atr']
         }

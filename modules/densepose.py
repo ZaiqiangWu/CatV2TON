@@ -133,7 +133,7 @@ class DensePose:
         self, 
         image_or_path, 
         resize=512,
-        colormap=cv2.COLORMAP_VIRIDIS,#None,
+        colormap=None,
         ) -> Image.Image:
         """
         :param image_or_path: Path of the input image.
