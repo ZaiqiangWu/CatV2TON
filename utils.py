@@ -241,6 +241,38 @@ def prepare_mask_image(mask_image, device='cuda', dtype=torch.float32):
 
     return mask_image.to(device, dtype=dtype)
 
+def resize_and_crop(image, size):
+    # Crop to size ratio
+    w, h = image.size
+    target_w, target_h = size
+    if w / h < target_w / target_h:
+        new_w = w
+        new_h = w * target_h // target_w
+    else:
+        new_h = h
+        new_w = h * target_w // target_h
+    image = image.crop(
+        ((w - new_w) // 2, (h - new_h) // 2, (w + new_w) // 2, (h + new_h) // 2)
+    )
+    # resize
+    image = image.resize(size, Image.LANCZOS)
+    return image
+
+def resize_and_padding(image, size):
+    # Padding to size ratio
+    w, h = image.size
+    target_w, target_h = size
+    if w / h < target_w / target_h:
+        new_h = target_h
+        new_w = w * target_h // h
+    else:
+        new_w = target_w
+        new_h = h * target_w // w
+    image = image.resize((new_w, new_h), Image.LANCZOS)
+    # padding
+    padding = Image.new("RGB", size, (255, 255, 255))
+    padding.paste(image, ((target_w - new_w) // 2, (target_h - new_h) // 2))
+    return padding
 
 def vis_mask(image, mask):
     image = np.array(image).astype(np.uint8)
