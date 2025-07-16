@@ -311,7 +311,7 @@ def main():
     video_dataset = VideoDataset(video_path, 'upper', clip_length=8)
     cloth_image = Image.open(cloth_path).convert("RGB")
     cloth_image = resize_and_padding(cloth_image, (args.width, args.height))
-    cloth_image = video_dataset.image_transforms(cloth_image)
+    cloth_image = video_dataset.image_transforms(cloth_image).unsqueeze(1)..unsqueeze(0)
 
 
 
