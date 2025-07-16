@@ -56,6 +56,7 @@ class VideoDataset(Dataset):
                 transforms.ToTensor(),
             ]
         )
+        self.start_frame = 0
 
     def __getitem__(self, id):
         # target shape [B, C, T, H, W]
@@ -79,10 +80,21 @@ class VideoDataset(Dataset):
         return masked_person, mask, densepose
 
     def gen_clip(self):
+        # target shape [B, C, T, H, W]
         persons=[]
         masks=[]
         denseposes=[]
-        for i in range(self.clip_length):
+        clip_len=self.clip_length
+        is_boundary=False
+        finished=False
+        padding_frames = 0
+        if self.start_frame + clip_len >= self.__len__():
+            finished=True
+        if self.start_frame + clip_len > self.__len__():
+            clip_len = self.__len__() - self.__start_frame
+            is_boundary=True
+            padding_frames = self.clip_length - clip_len
+        for i in range(self.start_frame,self.start_frame+clip_len):
             person, mask, densepose = self.__getitem__(i)
             persons.append(person)
             masks.append(mask)
@@ -91,10 +103,12 @@ class VideoDataset(Dataset):
         masks=torch.cat(masks, dim=2)
         masks=masks.repeat(1,3,1,1,1)
         denseposes=torch.cat(denseposes, dim=2)
-        print(persons.shape)
-        print(masks.shape)
-        print(denseposes.shape)
-        return persons, masks, denseposes
+        self.start_frame += self.clip_length
+        if is_boundary:
+            persons = torch.cat([persons,persons[:,:,[-1],:,:].repeat(1,1,padding_frames,1,1)], dim=2)
+            masks = torch.cat([masks,masks[:,:,[-1],:,:].repeat(1,1,padding_frames,1,1)], dim=2)
+            denseposes = torch.cat([denseposes,denseposes[:,:,[-1],:,:].repeat(1,1,padding_frames,1,1)], dim=2)
+        return persons, masks, denseposes, padding_frames, finished
 
 
 
@@ -325,12 +339,12 @@ def main():
 
     # Inference
     generator = torch.Generator(device='cuda').manual_seed(args.seed)
-    gt_path = os.path.join(args.output_dir, f"{args.dataset}-{args.height}", "gt")
     args.output_dir = os.path.join(args.output_dir, f"{args.dataset}-{args.height}", "paired" if args.eval_pair else "unpaired")
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
-    for i in range(1):
-        persons, masks, denseposes = video_dataset.gen_clip()
+    finished=False
+    while not finished:
+        persons, masks, denseposes, padding_frames,finished = video_dataset.gen_clip()
         
         # Inference
         results = pipeline.video_try_on(
@@ -355,11 +369,13 @@ def main():
         results = (results.permute(1, 2, 3, 0).cpu() * 255).clamp(0, 255)
         print(results.shape)#thwc
         n_frame = results.shape[0]
+        if padding_frames>0:
+            results=results[:n_frame-padding_frames]
         for i in range(n_frame):
             video_writer.append(results[i].numpy().astype(np.uint8),isRGB=True)
         #write_video('./output.mp4', results, fps=24)
-        video_writer.make_video()
-        video_writer.close()
+    video_writer.make_video()
+    video_writer.close()
 
             
 
