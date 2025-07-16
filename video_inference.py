@@ -308,7 +308,7 @@ def main():
 
     video_path = './videos/jin_16_test.mp4'
     cloth_path = './garments/upperbody/tshirt.jpg'
-    video_dataset = VideoDataset(video_path, 'upper', clip_length=7)
+    video_dataset = VideoDataset(video_path, 'upper', clip_length=8)
     cloth_image = Image.open(cloth_path).convert("RGB")
     cloth_image = resize_and_padding(cloth_image, (args.width, args.height))
     cloth_image = video_dataset.image_transforms(cloth_image).unsqueeze(1).unsqueeze(0)
@@ -351,6 +351,7 @@ def main():
         print(results.shape)
         results = results[0] * 0.5 + 0.5
         results = (results.permute(1, 2, 3, 0).cpu() * 255).clamp(0, 255)
+        print(results.shape)
         write_video('./output.mp4', results, fps=24)
 
             
