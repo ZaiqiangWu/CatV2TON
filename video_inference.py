@@ -37,7 +37,7 @@ class VideoDataset(Dataset):
         self.clip_length = clip_length
         self.cloth_type = cloth_type#'upper', 'lower', 'overall', 'inner', 'outer'
 
-        repo_path = snapshot_download(repo_id='./Models/CatVTON')
+        repo_path = snapshot_download(repo_id='zhengchong/CatVTON')
         self.automasker = AutoMasker(
             densepose_ckpt=os.path.join(repo_path, "DensePose"),
             schp_ckpt=os.path.join(repo_path, "SCHP"),
